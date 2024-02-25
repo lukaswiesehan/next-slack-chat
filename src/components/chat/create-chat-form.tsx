@@ -7,6 +7,7 @@ import {z} from 'zod'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {Button} from '@/components/ui/button'
 import {zodResolver} from '@hookform/resolvers/zod'
+import {useChatId} from '@/hooks/use-chat-id'
 
 export const CreateChatForm = ({userId}: {userId: string}) => {
   const FormSchema = z.object({
@@ -21,6 +22,8 @@ export const CreateChatForm = ({userId}: {userId: string}) => {
       name: ''
     }
   })
+
+  const {setChatId} = useChatId()
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
@@ -38,7 +41,7 @@ export const CreateChatForm = ({userId}: {userId: string}) => {
       const {channel, error} = await response.json()
       if (error) throw error
       localStorage.setItem('chat-id', channel.id)
-      alert(`Channel '${channelName}' successfully created.`)
+      setChatId(channel.id)
     } catch (error) {
       console.log(error)
       alert('Something went wrong.')

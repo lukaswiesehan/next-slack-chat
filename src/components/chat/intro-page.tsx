@@ -1,29 +1,46 @@
-import {Avatar} from './avatar'
-import {slackConfig} from '../../../slack.config'
-import {CreateChatForm} from './create-chat-form'
+'use client'
 
-const userId = slackConfig.users[0].id
+import {useUsers} from '@/hooks/use-users'
+import {Avatar} from './avatar'
+import {CreateChatForm} from './create-chat-form'
+import {Loader} from '../ui/loader'
+import {motion} from 'framer-motion'
 
 export const IntroPage = () => {
+  const {users, loading} = useUsers()
+
+  if (loading)
+    return (
+      <div className="h-full flex flex-col justify-center items-center">
+        <Loader />
+      </div>
+    )
+  const online = users.filter(({presence}) => presence === 'active').length
+
   return (
-    <div className="grow p-8 flex flex-col justify-between">
+    <motion.div initial={{x: '-100%'}} animate={{x: 0}} exit={{x: '-100%'}} className="h-full p-8 flex flex-col justify-between">
       <div>
         <h2 className="text-black font-bold text-lg">Hello there! 👋</h2>
-        <p className="mt-4">
-          Let&apos;s see how we can help you.
-          <br />
-          Please tell us your name and start a chat!
-        </p>
-        <p className="mt-4">If one of our team members is online, you should get a response in a few minutes.</p>
-        <ul className="flex pl-2.5 mt-5 mb-8">
-          {slackConfig.users.map(({id}) => (
-            <li key={id} className="-ml-2.5">
-              <Avatar userId={id} />
+        {online < 1 ? (
+          <p className="mt-4">None of our team members are currently online.</p>
+        ) : (
+          <>
+            <p className="mt-4">Let&apos;s see how we can help you.</p>
+            <p className="mt-4">
+              <span className="font-bold text-black">{online}</span> of our team members {online === 1 ? 'is' : 'are'} currently online, so you should get
+              a response within a few minutes.
+            </p>
+          </>
+        )}
+        <ul className="flex pl-2.5 mt-6 mb-8">
+          {users.map((user) => (
+            <li key={user.id} className="-ml-2.5">
+              <Avatar user={user} />
             </li>
           ))}
         </ul>
       </div>
-      <CreateChatForm userId={userId} />
-    </div>
+      {online > 0 && <CreateChatForm userId={users[0].id} />}
+    </motion.div>
   )
 }

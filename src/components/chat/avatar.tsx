@@ -1,17 +1,16 @@
-import {getUser} from '@/utils/slack/get-user'
+'use client'
+
 import Image from 'next/image'
 import {FC} from 'react'
-import {PresenceIndicator} from './presence-indicator'
+import {cn} from '@/utils/cn'
 
-export const Avatar: FC<{userId: string}> = async ({userId}) => {
-  const {profile} = await getUser(userId)
-
+export const Avatar: FC<{loading?: boolean; user: User}> = ({loading = false, user}) => {
+  if (loading) return <div className="w-9 h-9 rounded-full bg-slate-200 animate-pulse" />
   return (
-    <div className="relative h-9 w-9 rounded-full p-[3px] bg-white">
+    <div className={cn('relative h-9 w-9 rounded-full p-px bg-white border-2', user.presence === 'active' ? 'border-emerald-500' : 'border-slate-400')}>
       <div className="relative w-full h-full rounded-full overflow-hidden">
-        <Image src={profile.image_72} alt={profile.real_name} fill className="object-cover object-center" />
+        <Image src={user.image} alt={user.name} fill className="object-cover object-center" />
       </div>
-      <PresenceIndicator userId={userId} />
     </div>
   )
 }
