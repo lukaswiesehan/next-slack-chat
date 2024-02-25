@@ -3,7 +3,6 @@
 import {Dispatch, SetStateAction, createContext, useContext, useEffect, useState} from 'react'
 import {ChatPage} from './chat-page'
 import {IntroPage} from './intro-page'
-import {AnimatePresence} from 'framer-motion'
 
 //@ts-ignore
 const ChatContext = createContext<{chatId: string; setChatId: Dispatch<SetStateAction<string>>}>(null)
@@ -28,7 +27,7 @@ export const ChatWindow = () => {
       <div className="w-full h-full rounded-3xl bg-gradient-to-br from-white/25 to-white/20 border border-white/10 p-1">
         <ChatContext.Provider value={{chatId, setChatId}}>
           <div className="w-full h-full shadow rounded-[1.25rem] overflow-hidden bg-white">
-            <AnimatePresence initial={false}>{chatId ? <ChatPage key="chat-page" /> : <IntroPage key="intro-page" />}</AnimatePresence>
+            {chatId ? <ChatPage key="chat-page" /> : <IntroPage key="intro-page" />}
           </div>
         </ChatContext.Provider>
       </div>

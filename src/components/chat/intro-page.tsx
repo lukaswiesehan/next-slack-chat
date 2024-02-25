@@ -4,7 +4,6 @@ import {useUsers} from '@/hooks/use-users'
 import {Avatar} from './avatar'
 import {CreateChatForm} from './create-chat-form'
 import {Loader} from '../ui/loader'
-import {motion} from 'framer-motion'
 
 export const IntroPage = () => {
   const {users, loading} = useUsers()
@@ -18,7 +17,7 @@ export const IntroPage = () => {
   const online = users.filter(({presence}) => presence === 'active').length
 
   return (
-    <motion.div initial={{x: '-100%'}} animate={{x: 0}} exit={{x: '-100%'}} className="h-full p-8 flex flex-col justify-between">
+    <div className="h-full p-8 flex flex-col justify-between">
       <div>
         <h2 className="text-black font-bold text-lg">Hello there! 👋</h2>
         {online < 1 ? (
@@ -41,6 +40,6 @@ export const IntroPage = () => {
         </ul>
       </div>
       {online > 0 && <CreateChatForm userId={users[0].id} />}
-    </motion.div>
+    </div>
   )
 }

@@ -8,6 +8,7 @@ import {zodResolver} from '@hookform/resolvers/zod'
 import {Textarea} from '../ui/textarea'
 import {useSWRConfig} from 'swr'
 import {SendIcon} from '../icons/send'
+import {useEffect} from 'react'
 
 export const MessageForm = () => {
   const {mutate} = useSWRConfig()
@@ -46,9 +47,22 @@ export const MessageForm = () => {
     }
   }
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault()
+        onSubmit(form.getValues())
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [])
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-end gap-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-2">
         <FormField
           control={form.control}
           name="message"
@@ -56,13 +70,13 @@ export const MessageForm = () => {
             <FormItem className="grow">
               <FormLabel className="sr-only">Message</FormLabel>
               <FormControl>
-                <Textarea placeholder="Message" autoResize {...field} />
+                <Textarea placeholder="Message" required autoResize {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" aria-label="Send Message" className="shrink-0">
+        <Button type="submit" aria-label="Send Message" className="shrink-0 h-[3.25rem]">
           <SendIcon className="h-4 -mx-1.5 text-white" />
         </Button>
       </form>
